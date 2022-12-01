@@ -27,18 +27,32 @@ namespace AdventOfCodeStartProject
             //_inputData.ForEach(i => Console.WriteLine(i));
             //Console.WriteLine($"--END OF FILE--{Environment.NewLine}");
             //List<int> _inputDataINT = _inputData.ConvertAll(item => int.Parse(item));
+            int total = 0;
+            List<int> calories = new List<int>(); 
 
-            //     8,0 -> 0,8
-            List<Point> line = new List<Point>(); 
-
-            foreach(string i in _inputData)
+            //var intList = _inputData.Where(i => !string.IsNullOrEmpty(i)).Select(i => int.Parse(i)).ToList();
+            //var intList = _inputData.Where(i => !string.IsNullOrEmpty(i)).Select(i => int.Parse(i)).ToList();
+            foreach (string s in _inputData)
             {
-                i.Split(" -> " ).ToList();
-                Console.WriteLine(i);
+                if (s != "")
+                {
+                    total += int.Parse(s);
+                } 
+                else
+                {
+                    calories.Add(total);
+                    Console.WriteLine(total);
+                    total = 0;
+                }
 
             }
 
+            Console.WriteLine("number of elves: " + calories.Count);
+            Console.WriteLine("Highest Calories: " + calories.Max());
             
+            calories = calories.OrderByDescending(x => x).ToList();
+            var calOfTopThree = calories.Take(3).Sum();
+            Console.WriteLine("Sum of top three calories: " + calOfTopThree);
             //keep console open
             Console.WriteLine("Hit any key to close this window...");
                 Console.ReadKey();
