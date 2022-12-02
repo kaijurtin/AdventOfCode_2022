@@ -37,31 +37,31 @@ namespace AdventOfCodeStartProject
 	            {
 
 		            case "A X":
-                        points = 1 + 3;
+                        points = 0 + 3;
                         break;
                         case "A Y":
-                        points = 2 + 6;
+                        points = 3 + 1;
                         break;
                         case "A Z":
-                        points = 3 + 0;
+                        points = 6 + 2;
                         break;
                         case "B X":
-                        points = 1 + 0;
+                        points = 0 + 1;
                         break;
                         case "B Y":
-                        points = 2 + 3;
+                        points = 3 + 2;
                         break;
                         case "B Z":
-                        points = 3 + 6;
+                        points = 6 + 3;
                         break;
                         case "C X":
-                        points = 1 + 6;
+                        points = 0 + 2;
                         break;
                         case "C Y":
-                        points = 2 + 0;
+                        points = 3 + 3;
                         break;
                         case "C Z":
-                        points = 3 + 3;
+                        points = 6 + 1;
                         break;
 
                     default: points = 0;
