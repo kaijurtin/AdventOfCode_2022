@@ -27,32 +27,54 @@ namespace AdventOfCodeStartProject
             //_inputData.ForEach(i => Console.WriteLine(i));
             //Console.WriteLine($"--END OF FILE--{Environment.NewLine}");
             //List<int> _inputDataINT = _inputData.ConvertAll(item => int.Parse(item));
+            int points = 0;
             int total = 0;
-            List<int> calories = new List<int>(); 
-
             //var intList = _inputData.Where(i => !string.IsNullOrEmpty(i)).Select(i => int.Parse(i)).ToList();
             //var intList = _inputData.Where(i => !string.IsNullOrEmpty(i)).Select(i => int.Parse(i)).ToList();
             foreach (string s in _inputData)
             {
-                if (s != "")
-                {
-                    total += int.Parse(s);
-                } 
-                else
-                {
-                    calories.Add(total);
-                    Console.WriteLine(total);
-                    total = 0;
-                }
+                switch (s)
+	            {
+
+		            case "A X":
+                        points = 1 + 3;
+                        break;
+                        case "A Y":
+                        points = 2 + 6;
+                        break;
+                        case "A Z":
+                        points = 3 + 0;
+                        break;
+                        case "B X":
+                        points = 1 + 0;
+                        break;
+                        case "B Y":
+                        points = 2 + 3;
+                        break;
+                        case "B Z":
+                        points = 3 + 6;
+                        break;
+                        case "C X":
+                        points = 1 + 6;
+                        break;
+                        case "C Y":
+                        points = 2 + 0;
+                        break;
+                        case "C Z":
+                        points = 3 + 3;
+                        break;
+
+                    default: points = 0;
+                break;
+	            }
+            total += points;
 
             }
 
-            Console.WriteLine("number of elves: " + calories.Count);
-            Console.WriteLine("Highest Calories: " + calories.Max());
+            Console.WriteLine("total: " + total);
             
-            calories = calories.OrderByDescending(x => x).ToList();
-            var calOfTopThree = calories.Take(3).Sum();
-            Console.WriteLine("Sum of top three calories: " + calOfTopThree);
+            
+            
             //keep console open
             Console.WriteLine("Hit any key to close this window...");
                 Console.ReadKey();
