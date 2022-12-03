@@ -31,32 +31,29 @@ namespace AdventOfCodeStartProject
             
             
             var total = 0;
-            foreach (string s in _inputData)
+            for (int i = 0; i < _inputData.Count; i=i+3)
             {
-                
-                var firstHalfLength = (int)(s.Length / 2);
-                var secondHalfLength = s.Length - firstHalfLength;
-                var splitstring = new[]
-                    {
-                        s.Substring(0, firstHalfLength),
-                        s.Substring(firstHalfLength, secondHalfLength)
-                    };
-                var listOfCharsInFirstHalf = splitstring[0].Distinct().ToList();
-                
-                foreach (char c in listOfCharsInFirstHalf)
+                var one = _inputData[i];
+                var two = _inputData[i + 1];    
+                var three = _inputData[i + 2];
+
+                var listOfCharsInOne = one.Distinct().ToList();
+                foreach (char c in listOfCharsInOne)
                 {
-                    if (splitstring[1].Contains(c))
+                    if (two.Contains(c) && three.Contains(c))
                     {
                         Console.WriteLine("common Letter: " + c);
                         var value = findValue(c);
                         Console.WriteLine("value: " + value);
                         total += value;
-                        
-                        
+
+
                         Console.WriteLine("total: " + total);
                     }
                 }
+
             }
+
 
 
 
