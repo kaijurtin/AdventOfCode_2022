@@ -62,6 +62,16 @@ namespace AdventOfCodeStartProject
                     //Console.WriteLine("second pair contains first pair fully");
                     continue;
                     }
+                if(one.First() <= two.First() && one.Last() >= two.First())
+                {
+                    total++;
+                    continue;
+                }
+                if(two.First() <= one.First() && two.Last() >= one.First())
+                {
+                    total++;
+                    continue;
+                }
 
 	        }
 
