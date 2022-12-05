@@ -30,22 +30,6 @@ namespace AdventOfCodeStartProject
             //List<int> _inputDataINT = _inputData.ConvertAll(item => int.Parse(item));
 
             
-            
-            var total = 0;
-            var first = 0;
-            var last = 0;
-
-            List<string> list1= new List<string>();
-            List<string> list2= new List<string>();
-            List<string> list3= new List<string>();
-            List<string> list4= new List<string>();
-            List<string> list5= new List<string>();
-            List<string> list6= new List<string>();
-            List<string> list7= new List<string>();
-            List<string> list8= new List<string>();
-            List<string> list9= new List<string>();
-
-            var maxStapleHeight = 0;
             var listLength = 0;    
 
 
@@ -101,10 +85,16 @@ namespace AdventOfCodeStartProject
                 lists[i].RemoveAll(x => x == " ");
 			}
             
-            
+            /*foreach (var list in lists)
+	        {
+                Console.WriteLine("List #" + "[" + lists.IndexOf(list) + "]");
+                foreach (var item in list)
+	            {
+                    Console.WriteLine("[" + list.IndexOf(item) + "]" + item);
+	            }
+	        }
+            */
 
-            //_inputData = _inputData.Remove(x=>IsNullOrEmpty(x));
-            //get a seperate list of advices
             foreach (var line in _inputData)
 	        {
                 //var line = new List<string>(l.Select(c => c.ToString()));
@@ -117,11 +107,23 @@ namespace AdventOfCodeStartProject
                 var goal = int.Parse(linearray[5].ToString()) -1;
 
 
+
+                var movinglist = new List<string>();
                     for (int i = 0; i < qty; i++)
 			        {
-                    lists[goal].Add(lists[start][lists[start].Count-1]);
-                    lists[start].RemoveAt(lists[start].Count-1);
+                        movinglist.Add(lists[start].Last());
+                        lists[start].RemoveAt(lists[start].Count - 1);
 			        }
+                    movinglist.Reverse();
+                        
+                        
+                    foreach(var item in movinglist)
+                    {
+                        lists[goal].Add(item);
+                        //Console.WriteLine("[" + movinglist.IndexOf(item) + "]" + item);
+                    }
+
+                    movinglist.Clear();
                 }
 
 	        }
