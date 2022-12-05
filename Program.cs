@@ -35,49 +35,110 @@ namespace AdventOfCodeStartProject
             var first = 0;
             var last = 0;
 
+            List<string> list1= new List<string>();
+            List<string> list2= new List<string>();
+            List<string> list3= new List<string>();
+            List<string> list4= new List<string>();
+            List<string> list5= new List<string>();
+            List<string> list6= new List<string>();
+            List<string> list7= new List<string>();
+            List<string> list8= new List<string>();
+            List<string> list9= new List<string>();
 
-            foreach (string line in _inputData)
+            var maxStapleHeight = 0;
+            var listLength = 0;    
+
+
+           foreach (var line in _inputData)
+	       {
+                if (line.Contains("["))
+                    listLength ++;
+                else break;
+           }
+           var numberList = _inputData[listLength].Split(' ').ToList();
+            var numberOfLists = int.Parse(numberList.Max());
+
+            Console.WriteLine("number of Lists: " + numberOfLists);
+
+            var staples = _inputData.Where(x => x.Contains("[")).ToList();
+            List<List<string>> lists = new List<List<string>>();
+            for (int i = 1; i < numberOfLists +1 ; i++)
+			{
+                lists.Add(new List<string>());
+			}
+            Console.WriteLine("number of lists: " + lists.Count);
+
+
+
+            foreach (var staple in staples)
+			{
+                var charlist = new List<string>(staple.Select(c => c.ToString()));
+                if (lists.Count >= 1) 
+                    lists[0].Add(charlist[1]);
+                if (lists.Count >= 2)
+                    lists[1].Add(charlist[5]);
+                if (lists.Count >= 3)
+                    lists[2].Add(charlist[9]);
+                if (lists.Count >= 4)
+                    lists[3].Add(charlist[13]);
+                if (lists.Count >= 5)
+                    lists[4].Add(charlist[17]);
+                if (lists.Count >= 6)
+                    lists[5].Add(charlist[21]);
+                if (lists.Count >= 7)
+                    lists[6].Add(charlist[25]);
+                if (lists.Count >= 8)
+                    lists[7].Add(charlist[29]);
+                if (lists.Count >= 9)
+                    lists[8].Add(charlist[33]);
+
+			}
+
+            for (int i = 0; i < lists.Count; i++)
+			{
+            lists[i].Reverse();
+                lists[i].RemoveAll(x => string.IsNullOrEmpty(x));
+                lists[i].RemoveAll(x => x == " ");
+			}
+            
+            
+
+            //_inputData = _inputData.Remove(x=>IsNullOrEmpty(x));
+            //get a seperate list of advices
+            foreach (var line in _inputData)
 	        {
-                var pairs = line.Split(',');
-                var pairOne = pairs[0].Split('-').ToList();
-                var pairTwo = pairs[1].Split('-').ToList();
-
-                List<int> one = pairOne.ConvertAll(i => int.Parse(i));  
-                List<int> two = pairTwo.ConvertAll(i => int.Parse(i));  
-
-                
-
-                if(one.First() <= two.First() && one.Last() >= two.Last())
-                    { 
-                    total++;
-                    first++;
-                    //Console.WriteLine("first pair contains second pair fully");
-                    continue;
-                    }
-
-                if(two.First() <= one.First() && two.Last() >= one.Last())
-                    {
-                    total++;
-                    last++;
-                    //Console.WriteLine("second pair contains first pair fully");
-                    continue;
-                    }
-                if(one.First() <= two.First() && one.Last() >= two.First())
+                //var line = new List<string>(l.Select(c => c.ToString()));
+                //if(line.First().Equals("m"))
+                if (!String.IsNullOrEmpty(line) && line.StartsWith("m"))
                 {
-                    total++;
-                    continue;
-                }
-                if(two.First() <= one.First() && two.Last() >= one.First())
-                {
-                    total++;
-                    continue;
+                var linearray = line.Split(' ').ToArray();
+                var qty = int.Parse(linearray[1].ToString());
+                var start = int.Parse(linearray[3].ToString()) -1;
+                var goal = int.Parse(linearray[5].ToString()) -1;
+
+
+                    for (int i = 0; i < qty; i++)
+			        {
+                    lists[goal].Add(lists[start][lists[start].Count-1]);
+                    lists[start].RemoveAt(lists[start].Count-1);
+			        }
                 }
 
 	        }
 
-            Console.WriteLine("total: " + total);
-            Console.WriteLine("first: " + first);
-            Console.WriteLine("last: " + last);
+            var result = "";
+            foreach (var x in lists)
+	            {
+                if(x.Count > 0 && !String.IsNullOrEmpty(x.Last()))
+                result = result + x.Last();
+	            }
+
+            
+	       
+                Console.WriteLine("Result: " + result);
+	       
+
+
 
             //keep console open
             Console.WriteLine("Hit any key to close this window...");
