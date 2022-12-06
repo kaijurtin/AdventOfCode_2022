@@ -30,114 +30,38 @@ namespace AdventOfCodeStartProject
             //List<int> _inputDataINT = _inputData.ConvertAll(item => int.Parse(item));
 
             
-            var listLength = 0;    
+            var position = 0;    
 
 
-           foreach (var line in _inputData)
-	       {
-                if (line.Contains("["))
-                    listLength ++;
-                else break;
-           }
-           var numberList = _inputData[listLength].Split(' ').ToList();
-            var numberOfLists = int.Parse(numberList.Max());
-
-            Console.WriteLine("number of Lists: " + numberOfLists);
-
-            var staples = _inputData.Where(x => x.Contains("[")).ToList();
-            List<List<string>> lists = new List<List<string>>();
-            for (int i = 1; i < numberOfLists +1 ; i++)
-			{
-                lists.Add(new List<string>());
-			}
-            Console.WriteLine("number of lists: " + lists.Count);
-
-
-
-            foreach (var staple in staples)
-			{
-                var charlist = new List<string>(staple.Select(c => c.ToString()));
-                if (lists.Count >= 1) 
-                    lists[0].Add(charlist[1]);
-                if (lists.Count >= 2)
-                    lists[1].Add(charlist[5]);
-                if (lists.Count >= 3)
-                    lists[2].Add(charlist[9]);
-                if (lists.Count >= 4)
-                    lists[3].Add(charlist[13]);
-                if (lists.Count >= 5)
-                    lists[4].Add(charlist[17]);
-                if (lists.Count >= 6)
-                    lists[5].Add(charlist[21]);
-                if (lists.Count >= 7)
-                    lists[6].Add(charlist[25]);
-                if (lists.Count >= 8)
-                    lists[7].Add(charlist[29]);
-                if (lists.Count >= 9)
-                    lists[8].Add(charlist[33]);
-
-			}
-
-            for (int i = 0; i < lists.Count; i++)
-			{
-            lists[i].Reverse();
-                lists[i].RemoveAll(x => string.IsNullOrEmpty(x));
-                lists[i].RemoveAll(x => x == " ");
-			}
-            
-            /*foreach (var list in lists)
-	        {
-                Console.WriteLine("List #" + "[" + lists.IndexOf(list) + "]");
-                foreach (var item in list)
-	            {
-                    Console.WriteLine("[" + list.IndexOf(item) + "]" + item);
-	            }
-	        }
-            */
-
-            foreach (var line in _inputData)
-	        {
-                //var line = new List<string>(l.Select(c => c.ToString()));
-                //if(line.First().Equals("m"))
-                if (!String.IsNullOrEmpty(line) && line.StartsWith("m"))
-                {
-                var linearray = line.Split(' ').ToArray();
-                var qty = int.Parse(linearray[1].ToString());
-                var start = int.Parse(linearray[3].ToString()) -1;
-                var goal = int.Parse(linearray[5].ToString()) -1;
-
-
-
-                var movinglist = new List<string>();
-                    for (int i = 0; i < qty; i++)
-			        {
-                        movinglist.Add(lists[start].Last());
-                        lists[start].RemoveAt(lists[start].Count - 1);
-			        }
-                    movinglist.Reverse();
-                        
-                        
-                    foreach(var item in movinglist)
+                    foreach (var line in _inputData)
                     {
-                        lists[goal].Add(item);
-                        //Console.WriteLine("[" + movinglist.IndexOf(item) + "]" + item);
+                        for (int i = 0; i < line.Length-3; i++)
+			            {
+                            if (line[i] != line[i+1] && line[i] != line[i+2] && line[i] != line[i+3])
+                                {
+                                Console.WriteLine(line[i].ToString() + line[i+1] + line[i+2] + line[i+3]);
+                                var j = i+1;    
+                                if (line[j] != line[j+1] && line[j] != line[j+2])
+                                    {
+                                    var k = j+1;    
+                                    if (line[k] != line[k+1])
+                                        {
+                                        position = k+2; 
+                                        Console.WriteLine(line[i].ToString() + line[i+1] + line[i+2] + line[i+3]);
+                                        break;
+                                        }
+                                    else continue;
+                                    }
+                                else continue;
+                                }
+                            else continue;
+                         }
                     }
-
-                    movinglist.Clear();
-                }
-
-	        }
-
-            var result = "";
-            foreach (var x in lists)
-	            {
-                if(x.Count > 0 && !String.IsNullOrEmpty(x.Last()))
-                result = result + x.Last();
-	            }
+                
 
             
-	       
-                Console.WriteLine("Result: " + result);
+	            
+                Console.WriteLine("Position: " + position);
 	       
 
 
