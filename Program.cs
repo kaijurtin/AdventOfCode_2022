@@ -31,37 +31,33 @@ namespace AdventOfCodeStartProject
 
             
             var position = 0;    
-
+            var checklist = new List<char>();
 
                     foreach (var line in _inputData)
                     {
-                        for (int i = 0; i < line.Length-3; i++)
+                        for (int i = 0; i < line.Length-13; i++)
 			            {
-                            if (line[i] != line[i+1] && line[i] != line[i+2] && line[i] != line[i+3])
-                                {
-                                Console.WriteLine(line[i].ToString() + line[i+1] + line[i+2] + line[i+3]);
-                                var j = i+1;    
-                                if (line[j] != line[j+1] && line[j] != line[j+2])
-                                    {
-                                    var k = j+1;    
-                                    if (line[k] != line[k+1])
-                                        {
-                                        position = k+2; 
-                                        Console.WriteLine(line[i].ToString() + line[i+1] + line[i+2] + line[i+3]);
-                                        break;
-                                        }
-                                    else continue;
-                                    }
-                                else continue;
-                                }
-                            else continue;
-                         }
+                            checklist.Clear();
+
+                            for (int j = 0; j < 14; j++)
+			                {
+                                checklist.Add(line[i+j]);
+			                }
+                            var hasdoubles = checklist.GroupBy(x=>x).Any(g=>g.Count() > 1);
+                            if(hasdoubles) continue;
+                            else 
+                            {   
+                                position = i+14;
+                                Console.WriteLine("Position: " + position);
+                                break;
+                            }
+                        }
                     }
                 
 
             
 	            
-                Console.WriteLine("Position: " + position);
+                
 	       
 
 
