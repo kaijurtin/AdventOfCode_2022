@@ -47,6 +47,7 @@ namespace AdventOfCodeStartProject
 
 
             int[,] data = new int[rows,columns]; 
+            int[,] result = new int[rows,columns];
 
             for (int i = 0; i < rows; i++)
 			{
@@ -97,7 +98,8 @@ var tempbottom = new List<int>();
 			    {
                     templeft.Add(data[i,j]);
                     Console.WriteLine(data[i,j+1] +":"+ templeft.Max());
-                    if(data[i,j+1] > templeft.Max()) fromLeft++;
+                    if(data[i,j+1] > templeft.Max()) 
+                       result[i,j+1] = 1;
                     
                 }
                  Console.WriteLine("from Left: " +fromLeft);
@@ -107,7 +109,8 @@ var tempbottom = new List<int>();
 			    {
                     tempright.Add(data[i,k]);
                     Console.WriteLine(data[i,k-1] +":"+ tempright.Max());
-                    if(data[i,k-1] > tempright.Max()) fromRight++;
+                    if(data[i,k-1] > tempright.Max()) 
+                        result[i,k-1] = 1;
                 }
                 Console.WriteLine("from Right: " +fromRight);
                 tempright.Clear();
@@ -119,7 +122,8 @@ var tempbottom = new List<int>();
                 {
                     temptop.Add(data[j,i]);
                     Console.WriteLine(data[j+1,i] +":"+ temptop.Max());
-                    if(data[j+1,i] > temptop.Max()) fromTop++;
+                    if(data[j+1,i] > temptop.Max())
+                        result[j+1,i] = 1;
                 }
                 Console.WriteLine("from Top: " +fromTop);
                 temptop.Clear();
@@ -127,15 +131,16 @@ var tempbottom = new List<int>();
 			    {
                     tempbottom.Add(data[k,i]);
                     Console.WriteLine(data[k-1,i] +":"+ tempbottom.Max());
-                    if(data[k-1,i] > tempbottom.Max()) fromBottom++;
+                    if(data[k-1,i] > tempbottom.Max()) 
+                        result[k-1,i] = 1;
 			    }
                 Console.WriteLine("from Bottom: " +fromBottom);
                 tempbottom.Clear();
 
 			}
 
-
-            var sum = fromLeft + fromRight + fromTop + fromBottom + outertrees;
+            
+            var sum = result.Cast<int>().Sum() + outertrees;
             
             Console.WriteLine("SUM: " +  sum);
             //keep console open
