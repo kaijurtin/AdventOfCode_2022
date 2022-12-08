@@ -22,81 +22,61 @@ namespace AdventOfCodeStartProject
 
 
 
-         var grid = new List<List<int>>();
-            foreach (var line in input)
-            {
-                var row = new List<int>();
+var currentDirectory = new List<string>();
 
-                foreach(var tree in line){
-                    row.Add(Convert.ToInt32(tree));
+    string createCurrentDirectory(){
+        string dir = string.Join("/",currentDirectory);
+        dir = dir.Replace("//", "/");
+        return dir;
+    }
+
+    var directorySize = new Dictionary<string,int>();
+
+    foreach (var line in input){
+        if (line.Substring(0,1) == "$"){
+            var command = line.Split(' ');
+
+            if (command[1] == "cd"){
+                if (command[2] == ".."){
+                    currentDirectory.RemoveAt(currentDirectory.Count-1);
                 }
-
-                grid.Add(row);
-            }
-
-            int bestScenicScore = 0;
-
-            for (int row = 0; row < grid.Count; row++)
-            {
-                for (int col = 0; col < grid[row].Count; col++)
-                {
-                    int currentHeight = grid[row][col];
-
-                    int left = 0;
-                    int right = 0;
-                    int up = 0;
-                    int down = 0;
-
-
-                    //left check
-                    for(int leftCol = col-1; leftCol >= 0; leftCol--)
-                    {
-                        left++;
-                        if(grid[row][leftCol] >= currentHeight){
-                            break;
-                        }
-                    }
-            
-                    //right check
-                    for(int rightCol = col+1; rightCol < grid[row].Count; rightCol++)
-                    {
-                        right++;
-                        if(grid[row][rightCol] >= currentHeight){
-                            break;
-                        }
-                    }
-            
-                    //up check
-                    for(int upRow = row-1; upRow >= 0; upRow--)
-                    {
-                        up++;
-                        if(grid[upRow][col] >= currentHeight){
-                            break;
-                        }
-                    }
-            
-                    //down check
-                    for(int downRow = row+1; downRow < grid.Count; downRow++)
-                    {
-                        down++;
-                        if(grid[downRow][col] >= currentHeight){
-                            break;
-                        }
-                    }
-
-                    int scenicScore = left * right * up * down;
-
-                    if (scenicScore > bestScenicScore)
-                    {
-                        bestScenicScore = scenicScore;
-                    }
+                else {
+                    currentDirectory.Add(command[2]);
                 }
             }
-            Console.WriteLine(bestScenicScore.ToString());
-            Console.ReadLine();
+        }
+        else if (line.Substring(0,3) != "dir"){
+            var file = line.Split(' ');
+            if (!directorySize.ContainsKey(createCurrentDirectory())){
+                directorySize[createCurrentDirectory()] = 0;
+            }
+            string dir = createCurrentDirectory();
+            while (dir.Contains("/")){
+                if (!directorySize.ContainsKey(dir)){
+                    directorySize[dir] = 0;
+                }
+                directorySize[dir] += Convert.ToInt32(file[0]);
 
+                if (dir == "/") break;
 
+                var dirSplit = dir.Split('/').ToList();
+                dirSplit.RemoveAt(dirSplit.Count-1);
+                dir = string.Join("/",dirSplit);
+            }
+        }
+    }
 
+    int output = 0;
+
+    foreach(var item in directorySize)
+    {
+        if (item.Value <= 100000){
+            output += item.Value;
+        }
+    }
+
+    Console.WriteLine(output.ToString());
+            Console.ReadKey();
         }
         private static void readInput()
         {
