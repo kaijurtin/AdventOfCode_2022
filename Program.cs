@@ -27,105 +27,117 @@ namespace AdventOfCodeStartProject
             //_inputData.ForEach(i => Console.WriteLine(i));
             //Console.WriteLine($"--END OF FILE--{Environment.NewLine}");
             
-            //List<int> _inputDataINT = _inputData.ConvertAll(item => int.Parse(item));
-
+            //List<int> _inputData = _inputData.ConvertAll(item => int.Parse(item));
             //List<Dictionary> main = new List<Dictionary>(); //this is the "/" dir
             
-            Dir mainDir = new Dir("main"); 
-            Dir currentDIR = mainDir;
-            List<Dir> allDirs = new List<Dir>();
 
-            for (int i = 1; i < _inputData.Count; i++)
-            {
-                var aline = _inputData[i].Split(' ').ToList();
-                if(aline[0] == "$")
-                { 
-                    if(aline[1] == "cd")
-                    {
-                        if(aline[2] == "..")
-                        {
-                            if(currentDIR.name != "main")
-                            currentDIR = currentDIR.parent;//mainDir.directories.Find(x=>x.directories.Contains(currentDIR));
-                            continue;
-                        }
-                        
-                        else
-                        { 
-                            currentDIR = allDirs.Find(x=>x.name == aline[2].ToString());                            
-                            continue;
-                        }
-                    }
-                    if(aline[1]=="ls")
-                    {
-                        continue;
-                    }
-                }
-                //continue;
-                if(aline[0]=="dir")
-                {
-                    Dir dr = new Dir(aline[1].ToString(), currentDIR);
-                    currentDIR.directories.Add(dr);
-                    allDirs.Add(dr);
-                    continue;
-                }
-                else
-                {
-                    currentDIR.files.Add(new File(aline[1].ToString(), int.Parse(aline[0])));
-                    continue;
-                }
-             } 
-            for (int i = 0; i < allDirs.Count; i++)
+            var columns = _inputData.First().Length;
+            var rows = _inputData.Count;
+            var outertrees = columns * 2 + rows * 2 -4;
+            var fromLeft = 0;
+            var fromRight = 0;
+            var fromTop = 0;    
+            var fromBottom = 0;
+            bool stopLeft = false;
+            bool stopRight = false;
+            bool stopTop = false;
+            bool stopBottom = false;
+            var maxrow = new List<int>();
+            var maxcol = new List<int>();
+
+
+            int[,] data = new int[rows,columns]; 
+
+            for (int i = 0; i < rows; i++)
 			{
-                allDirs[i].dirsize = allDirs[i].files.Sum(x=>x.size);
-			}                
-            for (int i = 0; i < allDirs.Count; i++)
-            {
-                allDirs[i].parent.dirsize += allDirs[i].dirsize;
-            }
-            var sum = 0;
-            for (int i = 0; i < allDirs.Count; i++)
-            {
-                if (allDirs[i].dirsize <= 100000) sum += allDirs[i].dirsize;
-            }
-            foreach (Dir dir in allDirs)
-	        {
-                Console.WriteLine("DIR Name: " + dir.name);
-                Console.WriteLine("DIR Size: " + dir.dirsize);
-                Console.WriteLine("number of files: " + dir.files.Count);
-                if (dir.dirsize <= 100000) sum += dir.dirsize;
-    	    }
-            Console.WriteLine(sum);
-
-            /*var closest = 10000000;
-            var diff = 100000;
-            var candidates = allDirs.FindAll(x=>x.dirsize<100000);
-            var sizes = new List<int>();
-            foreach (Dir d in candidates)
-	        {
-                sizes.Add(d.dirsize);
-                //diff = 100000 - d.dirsize;
-                //sizes.Remove(d.dirsize);
-            }
-            foreach (int s in sizes)
-	        {
-                if (s < diff)
+            var line =_inputData[i].ToCharArray();
+                for (int j = 0; j < line.Length; j++)
                 {
-                    diff = diff - s;
-                    //sizes.Remove(s);
+                    data[i,j] = Convert.ToInt32(line[j].ToString());
                 }
-                //else sizes.Remove(s);
-	        }
-            closest = 100000 - diff;    
-	        */
-            Console.WriteLine("SUM: "+ sum);
-
+			}
             
-	            
-                
-	       
+         //IEnumerable<int> allValues = data.Cast<int>();
+
+            for (int i = 1; i < rows-1; i++)
+            {
+                var temp = new List<int>();
+                for (int j = 1; j < columns-1; j++)
+                {
+                    var value = (data[i,j]);
+                    temp.Add(value);
+                }
+                maxrow.Add(temp.Max());
+                temp.Clear();
+                Console.WriteLine(maxrow[i-1]);
+            }
+            for (int i = 1; i < columns-1; i++)
+            {
+                var temp = new List<int>();
+                for (int j = 1; j < rows-1; j++)
+                {
+                    var value = (data[j,i]);
+                    temp.Add(value);
+                }
+                maxcol.Add(temp.Max());
+                temp.Clear();
+                Console.WriteLine(maxcol[i-1]);
+            }
 
 
 
+var templeft = new List<int>();
+var tempright = new List<int>();
+var temptop = new List<int>();  
+var tempbottom = new List<int>();
+
+            for (int i = 1; i < rows-1; i++)
+            {
+                for (int j = 0; j < columns-2; j++)
+			    {
+                    templeft.Add(data[i,j]);
+                    Console.WriteLine(data[i,j+1] +":"+ templeft.Max());
+                    if(data[i,j+1] > templeft.Max()) fromLeft++;
+                    
+                }
+                 Console.WriteLine("from Left: " +fromLeft);
+                templeft.Clear();
+			
+                for (int k = columns-1 ; k > 1; k--)
+			    {
+                    tempright.Add(data[i,k]);
+                    Console.WriteLine(data[i,k-1] +":"+ tempright.Max());
+                    if(data[i,k-1] > tempright.Max()) fromRight++;
+                }
+                Console.WriteLine("from Right: " +fromRight);
+                tempright.Clear();
+
+            }
+            for (int i = 1; i < columns-1; i++)
+			{
+                for (int j = 0; j < rows-2; j++)
+                {
+                    temptop.Add(data[j,i]);
+                    Console.WriteLine(data[j+1,i] +":"+ temptop.Max());
+                    if(data[j+1,i] > temptop.Max()) fromTop++;
+                }
+                Console.WriteLine("from Top: " +fromTop);
+                temptop.Clear();
+                for (int k = rows-1; k > 1; k--)
+			    {
+                    tempbottom.Add(data[k,i]);
+                    Console.WriteLine(data[k-1,i] +":"+ tempbottom.Max());
+                    if(data[k-1,i] > tempbottom.Max()) fromBottom++;
+			    }
+                Console.WriteLine("from Bottom: " +fromBottom);
+                tempbottom.Clear();
+
+			}
+
+
+            var sum = fromLeft + fromRight + fromTop + fromBottom + outertrees;
+            
+            Console.WriteLine("SUM: " +  sum);
             //keep console open
             Console.WriteLine("Hit any key to close this window...");
                 Console.ReadKey();
@@ -136,37 +148,7 @@ namespace AdventOfCodeStartProject
         {
             _inputData = System.IO.File.ReadAllLines("Input.txt").ToList();
         }
-            
     }
-    public class Dir
-    {
-        public string name;
-        public List<File> files = new List<File>();
-        public List<Dir> directories = new List<Dir>();
-        public Dir parent;
-        public int dirsize;
-        
-        public Dir (string name, Dir parent)
-        {
-            this.name = name;
-            this.parent = parent;
-        }
-        public Dir (string name)
-        {
-            this.name = name;
-        }
-
-
-    }
-    public class File
-    {
-        public string name;
-        public int size;
-        public File(string name, int size)
-        {
-            this.name = name;
-            this.size = size;
-        }
-    }
-        
 }
+
+
