@@ -16,67 +16,68 @@ namespace AdventOfCodeStartProject
         static void Main(string[] args)
         {
             readInput();
-//var inputFile = File.ReadAllLines("../input/input_08.txt");
-        var input = _inputData;//new List<string>(inputFile);
+            var input = _inputData;
+            int hx = 0;
+            int hy = 0;
+            int tx = 0;
+            int ty = 0; 
+            var resty = 0;
+            var restx=0;
 
 
+            var pos = new List<Tuple<int,int>>();
+            pos.Add(new Tuple<int,int>(hx,hy));
+            
+            foreach (var line in input)
+            {
+                line.Split(' ');
+                var dir = line[0].ToString();
+                int steps = Convert.ToInt32(line.Substring(2));
+            
+                //moving right
+                for (int i = steps; i > 0; i--)
+			    {
+                    var beforehx=hx;
+                    var beforehy=hy;    
 
+                    switch (dir)
+                    { 
+                        case "R":
+                        hx++;
+                        break;
+                        case "L":
+                        hx--;
+                        break;
+                        case "U":
+                        hy++;
+                        break;
+                        case "D":                        
+                        hy--;
+                        break;
+                        default:
+                            break;
+                    }
+                
+                    //tail move
+                    int difx = hx-tx; 
+                    int dify = hy-ty;
 
-var currentDirectory = new List<string>();
+                    if(Math.Abs(difx) > 1 || Math.Abs(dify) > 1)
+                    {
+                        tx=beforehx;
+                        ty=beforehy;
+                    }
+                    pos.Add(Tuple.Create(tx,ty));
 
-    string createCurrentDirectory(){
-        string dir = string.Join("/",currentDirectory);
-        dir = dir.Replace("//", "/");
-        return dir;
-    }
-
-    var directorySize = new Dictionary<string,int>();
-
-    foreach (var line in input){
-        if (line.Substring(0,1) == "$"){
-            var command = line.Split(' ');
-
-            if (command[1] == "cd"){
-                if (command[2] == ".."){
-                    currentDirectory.RemoveAt(currentDirectory.Count-1);
-                }
-                else {
-                    currentDirectory.Add(command[2]);
                 }
             }
-        }
-        else if (line.Substring(0,3) != "dir"){
-            var file = line.Split(' ');
-            if (!directorySize.ContainsKey(createCurrentDirectory())){
-                directorySize[createCurrentDirectory()] = 0;
-            }
-            string dir = createCurrentDirectory();
-            while (dir.Contains("/")){
-                if (!directorySize.ContainsKey(dir)){
-                    directorySize[dir] = 0;
-                }
-                directorySize[dir] += Convert.ToInt32(file[0]);
+            var sum = pos.Distinct().Count();
+            
 
-                if (dir == "/") break;
-
-                var dirSplit = dir.Split('/').ToList();
-                dirSplit.RemoveAt(dirSplit.Count-1);
-                dir = string.Join("/",dirSplit);
-            }
-        }
-    }
-
-    int output = 0;
-
-    foreach(var item in directorySize)
-    {
-        if (item.Value <= 100000){
-            output += item.Value;
-        }
-    }
-
-    Console.WriteLine(output.ToString());
+            Console.WriteLine("SUM: " + sum);
+            Console.WriteLine("ENDE");
             Console.ReadKey();
+
         }
         private static void readInput()
         {
