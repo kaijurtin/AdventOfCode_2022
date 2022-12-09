@@ -21,9 +21,12 @@ namespace AdventOfCodeStartProject
             int hy = 0;
             int tx = 0;
             int ty = 0; 
-            var resty = 0;
-            var restx=0;
-
+            var movex = new List<int>() { hx,0,0,0,0,0,0,0,0,tx};
+            var movey = new List<int>() { hy,0,0,0,0,0,0,0,0,ty};
+            var diffx = new List<int>() { 0,0,0,0,0,0,0,0,0,0};
+            var diffy = new List<int>() { 0,0,0,0,0,0,0,0,0,0};
+            var beforex = new List<int>() { 0,0,0,0,0,0,0,0,0,0};
+            var beforey = new List<int>() { 0,0,0,0,0,0,0,0,0,0};
 
             var pos = new List<Tuple<int,int>>();
             pos.Add(new Tuple<int,int>(hx,hy));
@@ -37,37 +40,44 @@ namespace AdventOfCodeStartProject
                 //moving right
                 for (int i = steps; i > 0; i--)
 			    {
-                    var beforehx=hx;
-                    var beforehy=hy;    
+                    for (int g = 0; g < movex.Count; g++)
+                    {
+                        beforex[g]=movex[g];
+                        beforey[g]=movey[g];
+                    }
 
                     switch (dir)
                     { 
                         case "R":
-                        hx++;
+                        movex[0]++;
                         break;
                         case "L":
-                        hx--;
+                        movex[0]--;
                         break;
                         case "U":
-                        hy++;
+                        movey[0]++;
                         break;
                         case "D":                        
-                        hy--;
+                        movey[0]--;
                         break;
                         default:
                             break;
                     }
                 
                     //tail move
-                    int difx = hx-tx; 
-                    int dify = hy-ty;
-
-                    if(Math.Abs(difx) > 1 || Math.Abs(dify) > 1)
+                    for(int k=0; k < movex.Count-1; k++)
                     {
-                        tx=beforehx;
-                        ty=beforehy;
+                        diffx[k] = movex[k]-movex[k+1]; 
+                        diffy[k] = movey[k]-movey[k+1];
+                        
+                        if(Math.Abs(diffx[k]) > 1 || Math.Abs(diffy[k]) > 1)
+                        {
+                                movex[k+1]=beforex[k];
+                                movey[k+1]=beforey[k];
+
+                        }
                     }
-                    pos.Add(Tuple.Create(tx,ty));
+                    pos.Add(Tuple.Create(movex[9],movey[9]));
 
                 }
             }
