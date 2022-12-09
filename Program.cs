@@ -12,79 +12,73 @@ namespace AdventOfCodeStartProject
         //each line in the list of strings represents one line in the txt file
         //copy the data you get on the adventofcode website into the txt file and start coding!
         private static List<string> _inputData;
-        
+
+
         static void Main(string[] args)
         {
             readInput();
             var input = _inputData;
-            int hx = 0;
-            int hy = 0;
-            int tx = 0;
-            int ty = 0; 
-            var movex = new List<int>() { hx,0,0,0,0,0,0,0,0,tx};
-            var movey = new List<int>() { hy,0,0,0,0,0,0,0,0,ty};
-            var diffx = new List<int>() { 0,0,0,0,0,0,0,0,0,0};
-            var diffy = new List<int>() { 0,0,0,0,0,0,0,0,0,0};
-            var beforex = new List<int>() { 0,0,0,0,0,0,0,0,0,0};
-            var beforey = new List<int>() { 0,0,0,0,0,0,0,0,0,0};
+            int xHead = 0;
+            int yHead = 0;
 
-            var pos = new List<Tuple<int,int>>();
-            pos.Add(new Tuple<int,int>(hx,hy));
-            
-            foreach (var line in input)
-            {
-                line.Split(' ');
-                var dir = line[0].ToString();
-                int steps = Convert.ToInt32(line.Substring(2));
-            
-                //moving right
-                for (int i = steps; i > 0; i--)
-			    {
-                    for (int g = 0; g < movex.Count; g++)
-                    {
-                        beforex[g]=movex[g];
-                        beforey[g]=movey[g];
+            var xTails = new int[9];
+            var yTails =  new int[9];
+
+            var positions = new HashSet<string>();
+            positions.Add(position(xHead,yHead));
+
+            foreach (var line in input){
+                var instruction = line.Split(' ');
+
+                for (int i = Convert.ToInt32(instruction[1]); i > 0; i--){
+                    int prevX = xHead;
+                    int prevY = yHead;
+
+                    if (instruction[0] == "U"){
+                        yHead++;
+                    }
+                    else if (instruction[0] == "D"){
+                        yHead--;
+                    }
+                    else if (instruction[0] == "L"){
+                        xHead--;
+                    }
+                    else if (instruction[0] == "R"){
+                        xHead++;
                     }
 
-                    switch (dir)
-                    { 
-                        case "R":
-                        movex[0]++;
-                        break;
-                        case "L":
-                        movex[0]--;
-                        break;
-                        case "U":
-                        movey[0]++;
-                        break;
-                        case "D":                        
-                        movey[0]--;
-                        break;
-                        default:
-                            break;
-                    }
+                    for (int tail = 0; tail < 9; tail++){
+                        int xTail = xTails[tail];
+                        int yTail = yTails[tail];
+
+                        int xCompare = tail != 0 ? xTails[tail-1] : xHead;
+                        int yCompare = tail != 0 ? yTails[tail-1] : yHead;
+
+                        if (xCompare == xTail && (yCompare == yTail || Math.Abs(yCompare - yTail) == 1) || yCompare == yTail && Math.Abs(xCompare - xTail) == 1) continue;
+                        if (Math.Abs(yCompare - yTail) == 1 && Math.Abs(xCompare - xTail) == 1) continue;
+
+                        if (xCompare == xTail){
+                            yTails[tail] += yCompare > yTail ? 1 : -1;
+                        }
+                        else if (yCompare == yTail){
+                            xTails[tail] += xCompare > xTail ? 1 : -1;
+                        }                
+                        else {
+                            yTails[tail] += yCompare > yTail ? 1 : -1;
+                            xTails[tail] += xCompare > xTail ? 1 : -1;
+                        }
                 
-                    //tail move
-                    for(int k=0; k < movex.Count-1; k++)
-                    {
-                        diffx[k] = movex[k]-movex[k+1]; 
-                        diffy[k] = movey[k]-movey[k+1];
-                        
-                        if(Math.Abs(diffx[k]) > 1 || Math.Abs(diffy[k]) > 1)
-                        {
-                                movex[k+1]=beforex[k];
-                                movey[k+1]=beforey[k];
-
+                    
+                        if (tail == 8){
+                            positions.Add(position(xTails[tail],yTails[tail]));
                         }
                     }
-                    pos.Add(Tuple.Create(movex[9],movey[9]));
-
-                }
+                }        
             }
-            var sum = pos.Distinct().Count();
-            
 
-            Console.WriteLine("SUM: " + sum);
+            Console.WriteLine(positions.Count);
+
+
             Console.WriteLine("ENDE");
             Console.ReadKey();
 
@@ -93,7 +87,13 @@ namespace AdventOfCodeStartProject
         {
             _inputData = System.IO.File.ReadAllLines("Input.txt").ToList();
         }
+        private static string position(int x, int y)
+        {
+            return $"{x.ToString()},{y.ToString()}";
+        }
+
     }
 }
+    
 
 
