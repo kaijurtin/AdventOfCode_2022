@@ -17,46 +17,43 @@ namespace AdventOfCodeStartProject
         static void Main(string[] args)
         {
             readInput();
-            var cycle = 0;
-            var cc = 0;
-            var x = 1;
-            
+            int cycles = 0;
 
-            foreach(string l in _inputData)
+            int registerX = 0;
+
+            var crtScreen = new string[6, 40];
+
+            foreach (var instruction in _inputData)
             {
-                //l.Split(' ');
-                if (l.Substring(0,4).Equals("noop"))
+                if (cycles == (6 * 40) - 1) break;
+
+                if (instruction == "noop")
                 {
-                    cycle++;
-                    checkCycle(cycle,x);
-                    Console.WriteLine("cycle: " + cycle);
+                    crtScreen = DrawCRT(cycles, crtScreen, registerX);
+                    cycles++;
+                    continue;
                 }
 
-                if (l.Substring(0, 4).Equals("addx"))
+                for (int i = 0; i < 2; i++)
                 {
-                    cycle++;
-                    checkCycle(cycle, x);
-                    cycle++;
-                    checkCycle(cycle, x);
-                    Console.WriteLine("cycle: " + cycle);
-                    x += Convert.ToInt32(l.Substring(5, l.Length-5));
-                    Console.WriteLine("X: " + x);
-
+                    crtScreen = DrawCRT(cycles, crtScreen, registerX);
+                    cycles++;
+                    if (i == 1)
+                    {
+                        registerX += Convert.ToInt32(instruction.Split(' ')[1]);
+                    }
                 }
-
-
-
-
-
-
-
-
             }
-            foreach (var item in sums)
+
+            for (int row = 0; row < 6; row++)
             {
-            Console.WriteLine("sums: " + item);
+                string rowBuild = "";
+                for (int col = 0; col < 40; col++)
+                {
+                    rowBuild += crtScreen[row, col];
+                }
+                Console.WriteLine(rowBuild);
             }
-            Console.WriteLine("total: " + sums.Sum());
             Console.WriteLine("ENDE");
             Console.ReadKey();
 
@@ -65,20 +62,28 @@ namespace AdventOfCodeStartProject
         {
             _inputData = System.IO.File.ReadAllLines("Input.txt").ToList();
         }
-        private static void checkCycle(int cycle, int x)
+        private static string[,] DrawCRT(int cycles, string[,] crtScreen, int registerX)
         {
-            var cyclechecks = new List<int>() { 20, 60, 100, 140, 180, 220 };
-            if (cyclechecks.Contains(cycle))
-            {
-                var num = cycle * x;
-                sums.Add(num);
-            }
-        }
-        private static string position(int x, int y)
-        {
-            return $"{x.ToString()},{y.ToString()}";
-        }
+            var character = GetSpritePosition(registerX, cycles).Contains(cycles) ? "#" : ".";
 
+            Console.WriteLine($"{cycles}: {registerX} - [{(cycles / 40).ToString()}] - [{(cycles % 40).ToString()}]");
+
+            crtScreen[cycles / 40, cycles % 40] = character;
+            Console.WriteLine(crtScreen[cycles / 40, cycles % 40]);
+
+            return crtScreen;
+
+        }
+        private static int[] GetSpritePosition(int registerX, int cycles)
+        {
+            registerX += (cycles / 40) * 40;
+            return new int[]
+            {
+                registerX,
+                registerX+1,
+                registerX+2
+            };
+        }
     }
 }
     
