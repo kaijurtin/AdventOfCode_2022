@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 
 namespace AdventOfCodeStartProject
@@ -13,47 +14,57 @@ namespace AdventOfCodeStartProject
         //copy the data you get on the adventofcode website into the txt file and start coding!
         private static List<string> _inputData;
         private static List<int> sums = new List<int>();
+        
 
         static void Main(string[] args)
         {
             readInput();
-            int cycles = 0;
+            List <Monkey> monks = new List<Monkey>();
+            List<string>things = new List<string>();  
 
-            int registerX = 0;
-
-            var crtScreen = new string[6, 40];
-
-            foreach (var instruction in _inputData)
+            for (int i = 0; i < _inputData.Count; i=i+7)
             {
-                if (cycles == (6 * 40) - 1) break;
-
-                if (instruction == "noop")
-                {
-                    crtScreen = DrawCRT(cycles, crtScreen, registerX);
-                    cycles++;
-                    continue;
-                }
-
-                for (int i = 0; i < 2; i++)
-                {
-                    crtScreen = DrawCRT(cycles, crtScreen, registerX);
-                    cycles++;
-                    if (i == 1)
-                    {
-                        registerX += Convert.ToInt32(instruction.Split(' ')[1]);
-                    }
-                }
+                    
+                //monkey class
+                    int num = Convert.ToInt32((_inputData[i].Split(' ')[1]).Replace(":", ""));
+                    monks.Add(new Monkey(num));
+                //items
+                    things = _inputData[i+1].Split(' ').ToList();
+                    things.RemoveRange(0, 4);
+                        foreach (var item in things)
+                        {
+                            var ite = Convert.ToInt32(item.Replace(",", ""));
+                            monks[num].Items.Add(ite);
+                        }
+                    things.Clear();
+                //formula
+                    var form = _inputData[i+2].Split(' ').ToList();
+                    var formula = "item="+form[5]+form[6]+form[7];
+                        formula = formula.Replace("old", "item");
+                    Monkey.formula = formula;
+                        
+                //test
+                var test = Monkey.testnum = Convert.ToInt32(_inputData[i + 3].Split(' ').Last()); ;
+                //true
+                    Monkey.monTrue= Convert.ToInt32(_inputData[i + 4].Split(' ').Last());
+               //false
+                    Monkey.monFalse = Convert.ToInt32(_inputData[i + 5].Split(' ').Last());
             }
 
-            for (int row = 0; row < 6; row++)
+            foreach (var monk in monks)
             {
-                string rowBuild = "";
-                for (int col = 0; col < 40; col++)
+            Console.WriteLine("Monkey: " + monk.Nummer);
+                foreach (var item in monk.Items)
                 {
-                    rowBuild += crtScreen[row, col];
+                Console.WriteLine("item: " + item);
                 }
-                Console.WriteLine(rowBuild);
+            Console.WriteLine("formula: " + monk.Formel);
+            Console.WriteLine("Test number: " + monk.TestNummer);
+            Console.WriteLine("if true: " + monk.MonkeyTrue);
+            Console.WriteLine("if false: " + monk.MonkeyFalse);
+
             }
+
             Console.WriteLine("ENDE");
             Console.ReadKey();
 
@@ -62,27 +73,33 @@ namespace AdventOfCodeStartProject
         {
             _inputData = System.IO.File.ReadAllLines("Input.txt").ToList();
         }
-        private static string[,] DrawCRT(int cycles, string[,] crtScreen, int registerX)
+    }
+    
+     public class Monkey
+    {
+        public static int num;
+        public static List<int> items = new List<int>();
+        public static string formula;
+        public static int testnum;
+        public static int monTrue;
+        public static int monFalse;
+        //public static int calcNew(int item)
+        //{
+        //    item = item + formula;
+        //}
+        public Monkey(int num)
         {
-            var character = GetSpritePosition(registerX, cycles).Contains(cycles) ? "#" : ".";
-
-            Console.WriteLine($"{cycles}: {registerX} - [{(cycles / 40).ToString()}] - [{(cycles % 40).ToString()}]");
-
-            crtScreen[cycles / 40, cycles % 40] = character;
-            Console.WriteLine(crtScreen[cycles / 40, cycles % 40]);
-
-            return crtScreen;
-
+            num = Nummer;   
         }
-        private static int[] GetSpritePosition(int registerX, int cycles)
-        {
-            registerX += (cycles / 40) * 40;
-            return new int[]
-            {
-                registerX,
-                registerX+1,
-                registerX+2
-            };
+        public int Nummer { get { return num; } }
+        public List<int> Items { get { return items; } }
+        public string Formel { get { return formula; } }   
+        public int TestNummer { get { return testnum; } }
+        public int MonkeyTrue { get { return monTrue; } }
+        public int MonkeyFalse { get { return monFalse; } }
+        public static void addItem(int item)
+        { 
+            items.Add(item);
         }
     }
 }
