@@ -21,7 +21,7 @@ namespace AdventOfCodeStartProject
             readInput();
             List <Monkey> monks = new List<Monkey>();
             List<string>things = new List<string>();  
-
+            //get all monkeys
             for (int i = 0; i < _inputData.Count; i=i+7)
             {
                     
@@ -34,36 +34,63 @@ namespace AdventOfCodeStartProject
                         foreach (var item in things)
                         {
                             var ite = Convert.ToInt32(item.Replace(",", ""));
-                            monks[num].Items.Add(ite);
+                            monks[num].items.Add(ite);
                         }
                     things.Clear();
                 //formula
                     var form = _inputData[i+2].Split(' ').ToList();
                     var formula = "item="+form[5]+form[6]+form[7];
                         formula = formula.Replace("old", "item");
-                    Monkey.formula = formula;
+                        monks[num].formula = formula;
                         
                 //test
-                var test = Monkey.testnum = Convert.ToInt32(_inputData[i + 3].Split(' ').Last()); ;
+                var test = monks[num].testnum = Convert.ToInt32(_inputData[i + 3].Split(' ').Last()); ;
                 //true
-                    Monkey.monTrue= Convert.ToInt32(_inputData[i + 4].Split(' ').Last());
-               //false
-                    Monkey.monFalse = Convert.ToInt32(_inputData[i + 5].Split(' ').Last());
+                monks[num].montrue= Convert.ToInt32(_inputData[i + 4].Split(' ').Last());
+                //false
+                monks[num].monfalse = Convert.ToInt32(_inputData[i + 5].Split(' ').Last());
             }
+
+            //get a round done
+            for (int i = 0; i < 10000; i++)
+            {
+                foreach (var monk in monks)
+                {
+                    while (monk.items.Any())
+                    {
+                        monk.inspects++;
+                        var newval = monkeyCalc(monk, monk.items.First());
+                        var calc = Math.Floor((double)newval / 3);
+                        var newmonk = 0;
+                        if (calc % monk.testnum == 0)
+                            newmonk = monk.montrue;
+                        else newmonk = monk.monfalse;
+                        monks[newmonk].items.Add((int)calc);
+                        monk.items.Remove(monk.items.First());
+                    }
+                }
+            }
+
+            var mostinspects = monks.OrderByDescending(x => x.inspects).Take(2);
+            var result = mostinspects.First().inspects * mostinspects.Last().inspects;
+
 
             foreach (var monk in monks)
             {
-            Console.WriteLine("Monkey: " + monk.Nummer);
-                foreach (var item in monk.Items)
+                Console.WriteLine("Monkey: " + monk.number);
+                foreach (var item in monk.items)
                 {
-                Console.WriteLine("item: " + item);
+                    Console.WriteLine("item: " + item);
                 }
-            Console.WriteLine("formula: " + monk.Formel);
-            Console.WriteLine("Test number: " + monk.TestNummer);
-            Console.WriteLine("if true: " + monk.MonkeyTrue);
-            Console.WriteLine("if false: " + monk.MonkeyFalse);
 
+                Console.WriteLine("formula: " + monk.formula);
+                Console.WriteLine("Test number: " + monk.testnum);
+                Console.WriteLine("if true: " + monk.montrue);
+                Console.WriteLine("if false: " + monk.monfalse);
+                Console.WriteLine("\n");
+                Console.WriteLine("RESULT: "+result);
             }
+        
 
             Console.WriteLine("ENDE");
             Console.ReadKey();
@@ -73,34 +100,59 @@ namespace AdventOfCodeStartProject
         {
             _inputData = System.IO.File.ReadAllLines("Input.txt").ToList();
         }
+
+
+        private static int monkeyCalc(Monkey monkey, int item)
+        {
+            var result = 0;
+            //var nextMonkey = 0;
+           // var item = monkey.items.First();
+            var formula = monkey.formula;
+
+            if (formula.Contains("+"))
+            {
+                result = item + int.Parse(formula.Split('+').Last());
+            }
+            else
+            {
+                if (formula.Split('*').Last() != "item")
+                {
+                    result = item * int.Parse(formula.Split('*').Last());
+                }
+                else result = item * item;
+            }
+
+            return result;
+        }
     }
     
      public class Monkey
     {
-        public static int num;
-        public static List<int> items = new List<int>();
-        public static string formula;
-        public static int testnum;
-        public static int monTrue;
-        public static int monFalse;
+        public int num;
+
+        //public List<int> items = new List<int>();
         //public static int calcNew(int item)
         //{
         //    item = item + formula;
         //}
         public Monkey(int num)
         {
-            num = Nummer;   
+            number = num;
+            items = new List<int>();
+            inspects = 0;
+            formula = "0";
+            montrue = 0;
+            monfalse = 0;
+            testnum = 0;
+
         }
-        public int Nummer { get { return num; } }
-        public List<int> Items { get { return items; } }
-        public string Formel { get { return formula; } }   
-        public int TestNummer { get { return testnum; } }
-        public int MonkeyTrue { get { return monTrue; } }
-        public int MonkeyFalse { get { return monFalse; } }
-        public static void addItem(int item)
-        { 
-            items.Add(item);
-        }
+        public  int number { get; set; }
+        public  List<int> items { get; set; }
+        public  string formula { get; set; }
+        public  int testnum { get; set; }
+        public  int montrue { get; set; }
+        public  int monfalse { get; set; }
+        public int inspects { get; set; }
     }
 }
     
