@@ -51,6 +51,9 @@ namespace AdventOfCodeStartProject
                 monks[num].monfalse = Convert.ToInt32(_inputData[i + 5].Split(' ').Last());
             }
 
+            //find new divisor
+            var divisor = monks.Select(m => m.testnum).Aggregate((a, b) => a * b);
+            Console.WriteLine("divisor: "+divisor);
             //get a round done
             for (int i = 0; i < 10000; i++)
             {
@@ -59,8 +62,8 @@ namespace AdventOfCodeStartProject
                     while (monk.items.Any())
                     {
                         monk.inspects++;
-                        var newval = monkeyCalc(monk, monk.items.First());
-                        var calc = Math.Floor((double)newval / 3);
+                        long newval = monkeyCalc(monk, monk.items.First());
+                        double calc = Math.Floor((double)newval % divisor);
                         var newmonk = 0;
                         if (calc % monk.testnum == 0)
                             newmonk = monk.montrue;
@@ -82,7 +85,7 @@ namespace AdventOfCodeStartProject
                 {
                     Console.WriteLine("item: " + item);
                 }
-
+                Console.WriteLine("inspects: " + monk.inspects);
                 Console.WriteLine("formula: " + monk.formula);
                 Console.WriteLine("Test number: " + monk.testnum);
                 Console.WriteLine("if true: " + monk.montrue);
@@ -102,22 +105,22 @@ namespace AdventOfCodeStartProject
         }
 
 
-        private static int monkeyCalc(Monkey monkey, int item)
+        private static long monkeyCalc(Monkey monkey, long item)
         {
-            var result = 0;
+            long result = 0;
             //var nextMonkey = 0;
            // var item = monkey.items.First();
             var formula = monkey.formula;
 
             if (formula.Contains("+"))
             {
-                result = item + int.Parse(formula.Split('+').Last());
+                result = item + long.Parse(formula.Split('+').Last());
             }
             else
             {
                 if (formula.Split('*').Last() != "item")
                 {
-                    result = item * int.Parse(formula.Split('*').Last());
+                    result = item * long.Parse(formula.Split('*').Last());
                 }
                 else result = item * item;
             }
@@ -138,7 +141,7 @@ namespace AdventOfCodeStartProject
         public Monkey(int num)
         {
             number = num;
-            items = new List<int>();
+            items = new List<long>();
             inspects = 0;
             formula = "0";
             montrue = 0;
@@ -147,12 +150,12 @@ namespace AdventOfCodeStartProject
 
         }
         public  int number { get; set; }
-        public  List<int> items { get; set; }
+        public  List<long> items { get; set; }
         public  string formula { get; set; }
-        public  int testnum { get; set; }
+        public  long testnum { get; set; }
         public  int montrue { get; set; }
         public  int monfalse { get; set; }
-        public int inspects { get; set; }
+        public long inspects { get; set; }
     }
 }
     
