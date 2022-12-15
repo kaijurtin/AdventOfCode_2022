@@ -14,111 +14,185 @@ namespace AdventOfCodeStartProject
         //this field contains whats written in your input.txt
         //each line in the list of strings represents one line in the txt file
         //copy the data you get on the adventofcode website into the txt file and start coding!
-        // private static List<string> _inputData;
+        private static List<string> _inputData;
 
 
         static void Main(string[] args)
         {
-            //readInput();
-            //Console.WriteLine("ENDE");
-            //Console.ReadKey();
+            readInput();
 
             var stopwatch = Stopwatch.StartNew();
 
-            var data =
-                (from line in File.ReadAllLines("input.txt")
-                    where !string.IsNullOrWhiteSpace(line)
-                    select line.ToArray()).ToArray();
+            //var data =
+            //    (from line in File.ReadAllLines("input.txt")
+            //        where !string.IsNullOrWhiteSpace(line)
+            //        select line.ToArray()).ToArray();
 
-            var start = (x: -1, y: -1);
-            var end = (x: -1, y: -1);
+            Tuple<string, string, int> couple = new Tuple<string, string, int>(null, null, 0);
+            List<int> correct = new List<int>();
+            var num = 0;
 
-            for (int x = 0; x < data.Length; ++x)
-            for (int y = 0; y < data[0].Length; ++y)
+
+            for (int i = 0; i < _inputData.Count; i = i + 3)
             {
-                if (data[x][y] == 'S')
+                foreach (var c in correct)
                 {
-                    start = (x, y);
-                    data[x][y] = 'a';
+                    Console.WriteLine(c);
                 }
 
-                if (data[x][y] == 'E')
+                if (_inputData[i] != string.Empty)
                 {
-                    end = (x, y);
-                    data[x][y] = 'z';
+                    num++;
+                    couple = Tuple.Create(_inputData[i], _inputData[i + 1], num);
                 }
-            }
 
-            Dictionary<(int, int), int> distanceCache = new Dictionary<(int, int), int>() { { end, 0 } };
-
-            void ComputeCost(int x, int y)
-            {
-                if (!distanceCache.TryGetValue((x, y), out var currentCost))
-                    throw new InvalidOperationException($"Cannot compute cost for neighbors of {x},{y}");
-
-                void ComputeNeighbor(int newX, int newY)
+                var left = couple.Item1;//.ToCharArray();
+                var right = couple.Item2;//.ToCharArray();
+                //compare
+                while (left != null && right != null)
                 {
-                    if (newX < 0 || newX >= data.Length || newY < 0 || newY >= data[0].Length)
-                        return;
+                    int lf = 0;
+                    int rg = 0;
 
-                    if (data[newX][newY] + 1 >= data[x][y])
+                    right = cleanString(right);
+                    if (right != null)
                     {
-                        if (!distanceCache.TryGetValue((newX, newY), out var currentNeighborCost) ||
-                            currentNeighborCost > currentCost + 1)
+                        try
                         {
-                            distanceCache[(newX, newY)] = currentCost + 1;
-                            ComputeCost(newX, newY);
+                            rg = int.Parse(right.Substring(0,2).ToString());
+                        }
+                        catch
+                        {
+                            int.TryParse(right.First().ToString(), out rg);
                         }
                     }
+                    else
+                    {
+                        continue;
+                    }
+
+
+                    left = cleanString(left);
+                    if (left != null)
+                    {
+                        try
+                        {
+                            lf = int.Parse(left.Substring(0, 2).ToString());
+                        }
+                        catch
+                        {
+                        int.TryParse(left.First().ToString(), out lf);
+                        }
+
+                    }
+                    else
+                    {
+                        correct.Add(num);
+                        break;
+                    }
+
+
+                   
+                    
+                    if (lf < rg)
+                    {
+                        correct.Add(num);
+                        break;
+                    }
+
+                    if (rg < lf)
+                    {
+                        break;
+                    }
+
+
+                    left = left.Remove(0, 1);
+                    right = right.Remove(0, 1);
+                    if (left != null && right == null)
+                    {
+                        break;
+                    }
+                    if (right != null && left == null)
+                    {
+                        correct.Add(num);
+                        break;
+                    }
+
                 }
-
-                ComputeNeighbor(x - 1, y);
-                ComputeNeighbor(x + 1, y);
-                ComputeNeighbor(x, y - 1);
-                ComputeNeighbor(x, y + 1);
             }
 
-            ComputeCost(end.x, end.y);
 
-            long GetPart1() =>
-                distanceCache[(start.x, start.y)];
 
-            long GetPart2()
-            {
-                var result = long.MaxValue;
 
-                for (int x = 0; x < data.Length; ++x)
-                for (int y = 0; y < data[0].Length; ++y)
-                    if (data[x][y] == 'a' && distanceCache.TryGetValue((x, y), out var potential))
-                        if (potential < result)
-                            result = potential;
 
-                return result;
-            }
+            //long GetPart1() => 0;
+            //long GetPart2() => 0;
+            //Console.WriteLine($"[{stopwatch.Elapsed}] Pre-compute");
 
-            Console.WriteLine($"[{stopwatch.Elapsed}] Pre-compute");
+            //stopwatch = Stopwatch.StartNew();
+            //var part1Result = GetPart1();
+            //Console.WriteLine($"[{stopwatch.Elapsed}] Part 1: {part1Result}");
 
-            stopwatch = Stopwatch.StartNew();
-            var part1Result = GetPart1();
+            //stopwatch = Stopwatch.StartNew();
+            //var part2Result = GetPart2();
+            //Console.WriteLine($"[{stopwatch.Elapsed}] Part 2: {part2Result}");
+
+
+
+            var part1Result = correct.Sum();
             Console.WriteLine($"[{stopwatch.Elapsed}] Part 1: {part1Result}");
 
-            stopwatch = Stopwatch.StartNew();
-            var part2Result = GetPart2();
-            Console.WriteLine($"[{stopwatch.Elapsed}] Part 2: {part2Result}");
-
+            Console.WriteLine("ENDE");
             Console.ReadKey();
+
 
         }
 
-        //private static void readInput()
-        //{
-        //    _inputData = System.IO.File.ReadAllLines("Input.txt").ToList();
-        //}
+        private static void check(string left, string right)
+        {
+
+        }
+        private static string cleanString(string str)
+        {
+            var result = "";
+            if (!String.IsNullOrEmpty(str))
+            {
+                while (str.First().Equals(',') || str.First().Equals('[') || str.First().Equals(']'))
+                {
+                    if (!String.IsNullOrEmpty(str) && str.Length > 1)
+                    {
+                        str = str.Substring(1, str.Length - 1);
+                    }
+                    else
+                    {
+                        str = null;
+                        break;
+                    }
+                }
+                result = str;
+            }
+            else result = null;
+            return result;
+        }
+
+        private static string removeBrackets(string str)
+        {
+            while (str.First().Equals('['))
+            {
+                str = str.Substring(1, str.Length - 1);
+            }
+            return str;
+        }
+
+        private static void readInput()
+        {
+            _inputData = System.IO.File.ReadAllLines("Input.txt").ToList();
+        }
 
 
 
     }
 }
-    
+
 
 
