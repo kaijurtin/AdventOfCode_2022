@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>AdventOfCodeStartProject</RootNamespace>
     <AssemblyName>AdventOfCodeStartProject</AssemblyName>
-    <TargetFrameworkVersion>v8.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v7.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
