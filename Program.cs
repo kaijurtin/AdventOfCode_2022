@@ -40,7 +40,7 @@ var row = new List<int>();
             for (int i = 0; i < line.Length; i++)
             {
             if (Char.IsDigit(line[i]))
-               row += line[i];
+               row += line[i];.
         }
 
          
